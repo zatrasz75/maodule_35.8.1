@@ -24,6 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Запуск сетевой службы по протоколу TCP
 	listener, err := net.Listen(proto, addr)
 	if err != nil {
 		log.Fatal(err)
@@ -45,6 +46,7 @@ func main() {
 			log.Fatal(err)
 		}
 		log.Println("установлено соединение:", conn.RemoteAddr())
+
 		// Вызов обработчика подключения.
 		go handleConn(conn, str)
 	}
@@ -60,7 +62,7 @@ func handleConn(conn net.Conn, str []string) {
 		}
 	}(conn)
 
-	// Читаем строки раз в 3 секунды.
+	// Читаем рандомно строки раз в 3 секунды.
 	for {
 		_, err := conn.Write([]byte(str[rand.Intn(len(str))] + "\n\r"))
 		if err != nil {
@@ -73,6 +75,7 @@ func handleConn(conn net.Conn, str []string) {
 
 // Получает данные по заданному URL
 func getStr(url string) ([]string, error) {
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -93,16 +96,17 @@ func getStr(url string) ([]string, error) {
 }
 
 // Выбирает нужные строки с Url
-func parseUrl(text string) (data []string) {
-	tkn := html.NewTokenizer(strings.NewReader(text))
-	var vals []string
+func parseUrl(body string) (data []string) {
+
+	tkn := html.NewTokenizer(strings.NewReader(body))
+	var values []string
 	var isH3, isProverb bool
 
 	for {
 		tt := tkn.Next()
 		switch {
 		case tt == html.ErrorToken:
-			return vals
+			return values
 		case tt == html.StartTagToken:
 			t := tkn.Token()
 			if !isH3 {
@@ -113,7 +117,7 @@ func parseUrl(text string) (data []string) {
 		case tt == html.TextToken:
 			t := tkn.Token()
 			if isProverb {
-				vals = append(vals, t.Data)
+				values = append(values, t.Data)
 			}
 			isH3 = false
 			isProverb = false

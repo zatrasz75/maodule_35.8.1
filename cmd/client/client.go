@@ -14,10 +14,12 @@ const (
 )
 
 func main() {
+	// Подключение к сетевой службе.
 	conn, err := net.Dial(proto, addr)
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Не забываем закрыть ресурс.
 	defer func(conn net.Conn) {
 		err := conn.Close()
 		if err != nil {
@@ -34,9 +36,9 @@ func main() {
 			log.Fatal(err)
 		}
 		id++
-		msg := strings.Trim(string(pvb), "\n")
-		msg = strings.Trim(msg, "\r")
-		fmt.Printf("Найдена поговорка № %d: %s\n", id, msg)
+		str := strings.Trim(string(pvb), "\n")
+		str = strings.Trim(str, "\r")
+		fmt.Printf("Найдена поговорка № %d: %s\n", id, str)
 	}
 
 }
