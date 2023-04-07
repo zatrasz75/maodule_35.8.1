@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -39,17 +40,34 @@ func main() {
 	// Подключения обрабатываются в бесконечном цикле.
 	// Иначе после обслуживания первого подключения сервер
 	// завершит работу.
-	for {
-		// Принимаем подключение.
-		conn, err := listener.Accept()
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Println("установлено соединение:", conn.RemoteAddr())
+	go func() {
+		for {
+			// Принимаем подключение.
+			conn, err := listener.Accept()
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("установлено соединение:", conn.RemoteAddr())
 
-		// Вызов обработчика подключения.
-		go handleConn(conn, str)
+			// Вызов обработчика подключения.
+			go handleConn(conn, str)
+		}
+	}()
+
+	fmt.Println("Для выхода программы введите: Выход")
+	s := ""
+	for {
+		_, err := fmt.Scanln(&s)
+		if err != nil {
+			return
+		}
+		switch s {
+		case "Выход":
+			log.Println("Выход из программы.")
+			return
+		}
 	}
+
 }
 
 // Обработчик. Вызывается для каждого соединения.

@@ -30,15 +30,31 @@ func main() {
 	reader := bufio.NewReader(conn)
 	id := 0
 
-	for {
-		pvb, err := reader.ReadBytes('\n')
-		if err != nil {
-			log.Fatal(err)
+	go func() {
+		for {
+			pvb, err := reader.ReadBytes('\n')
+			if err != nil {
+				log.Fatal(err)
+			}
+			id++
+			str := strings.Trim(string(pvb), "\n")
+			str = strings.Trim(str, "\r")
+			fmt.Printf("Найдена поговорка № %d: %s\n", id, str)
 		}
-		id++
-		str := strings.Trim(string(pvb), "\n")
-		str = strings.Trim(str, "\r")
-		fmt.Printf("Найдена поговорка № %d: %s\n", id, str)
+	}()
+
+	fmt.Println("Для выхода программы введите: Выход")
+	s := ""
+	for {
+		_, err := fmt.Scanln(&s)
+		if err != nil {
+			return
+		}
+		switch s {
+		case "Выход":
+			log.Println("Выход из программы.")
+			return
+		}
 	}
 
 }
